@@ -2,7 +2,7 @@ syn match todosStartTime "\vSTART_TIME: \d+-\d+-\d+ \d+:\d+:\d+"
 syn match todosDoneTime "\vDONE_TIME: \d+-\d+-\d+ \d+:\d+:\d+"
 syn match todosElapsedTime "\vELAPSED: (\d+h)?(\d+m)?\d+s"
 syn match todosGroupName /^.*:$/
-syn region todosTaskTitle start="\v^  " end="\v   "
+syn region todosTaskTitle start=/^  \*/ end=/$/ contains=todosStartTime,todosDoneTime,todosElapsedTime
 
 hi todosStartTime guifg=yellow
 hi todosDoneTime guifg=LightGreen
