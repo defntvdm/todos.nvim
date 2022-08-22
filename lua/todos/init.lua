@@ -38,6 +38,17 @@ function M_.done_task()
     vim.api.nvim_buf_set_lines(0, row-1, row, false, { line })
 end
 
+function M_.create_subtask()
+    local row, _ = unpack(vim.api.nvim_win_get_cursor(0));
+    local line = vim.api.nvim_buf_get_lines(0, row - 1, row, true)[1]
+    if line:match('^[%s]*$') ~= nil then
+        row = row - 1
+    end
+    vim.api.nvim_buf_set_lines(0, row, row, true, { '    ** ' })
+    vim.api.nvim_win_set_cursor(0, { row + 1, 6 })
+    vim.fn.feedkeys('a')
+end
+
 function M_.create_task()
     local row, _ = unpack(vim.api.nvim_win_get_cursor(0));
     local line = vim.api.nvim_buf_get_lines(0, row - 1, row, true)[1]
@@ -78,6 +89,7 @@ function M_.setup()
                 vim.bo.filetype = 'todos'
                 vim.bo.shiftwidth = 2
                 vim.api.nvim_buf_set_keymap(0, 'n', '<leader>tc', [[:lua require'todos'.create_task()<CR>]], opts)
+                vim.api.nvim_buf_set_keymap(0, 'n', '<leader>tx', [[:lua require'todos'.create_subtask()<CR>]], opts)
                 vim.api.nvim_buf_set_keymap(0, 'n', '<leader>tg', [[:lua require'todos'.create_group()<CR>]], opts)
                 vim.api.nvim_buf_set_keymap(0, 'n', '<leader>ts', [[:lua require'todos'.start_task()<CR>]], opts)
                 vim.api.nvim_buf_set_keymap(0, 'n', '<leader>td', [[:lua require'todos'.done_task()<CR>]], opts)
