@@ -89,6 +89,7 @@ function M_.setup()
     }
     for _, event in ipairs(events) do
         vim.api.nvim_create_autocmd(event, {
+            group = vim.api.nvim_create_augroup('TodosNvimKeymaps', { clear = false }),
             pattern = '*.todo',
             callback = function()
                 vim.bo.filetype = 'todos'
@@ -101,6 +102,22 @@ function M_.setup()
             end
         })
     end
+
+    vim.api.nvim_create_autocmd('BufWinLeave', {
+        group = vim.api.nvim_create_augroup('TodosNvimFoldsSave', { clear = false }),
+        pattern = '*.todo',
+        callback = function()
+            vim.cmd [[mkview]]
+        end
+    })
+
+    vim.api.nvim_create_autocmd('BufWinEnter', {
+        group = vim.api.nvim_create_augroup('TodosNvimFoldsLoad', { clear = false }),
+        pattern = '*.todo',
+        callback = function()
+            vim.cmd [[loadview]]
+        end
+    })
 end
 
 return M_
