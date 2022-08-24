@@ -3,12 +3,12 @@ local os = require'os'
 M_ = {}
 
 local time_fmt = '%Y-%m-%d %H:%M:%S'
-local time_fmt_pattern = "(%d+)-(%d+)-(%d+) (%d+):(%d+):(%d+)"
+local time_fmt_pattern = 'START_TIME: (%d+)-(%d+)-(%d+) (%d+):(%d+):(%d+)'
 
 function M_.start_task()
     local row, _ = unpack(vim.api.nvim_win_get_cursor(0));
     local line = vim.api.nvim_buf_get_lines(0, row - 1, row, true)[1]
-    if line:match('^  \\*') == nil or line:match('START_TIME') ~= nil then
+    if line:match('^  \\*') == nil or line:match('START_TIME') ~= nil or line:match('DONE_TIME') ~= nil then
         return
     end
     line = line .. '   START_TIME: ' .. os.date(time_fmt)
@@ -18,7 +18,12 @@ end
 function M_.done_task()
     local row, _ = unpack(vim.api.nvim_win_get_cursor(0));
     local line = vim.api.nvim_buf_get_lines(0, row - 1, row, true)[1]
-    if line:match('DONE_TIME') ~= nil or line:match('START_TIME') == nil or line:match('^  \\*') == nil then
+    if line:match('DONE_TIME') ~= nil or line:match('^  \\*') == nil then
+        return
+    end
+    if line:match('START_TIME') == nil then
+        line = line .. '   DONE_TIME: ' .. os.date(time_fmt)
+        vim.api.nvim_buf_set_lines(0, row-1, row, false, { line })
         return
     end
     local year, month, day, hour, min, sec = line:match(time_fmt_pattern)
